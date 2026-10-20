@@ -185,7 +185,7 @@ O Site é **público** e deve permanecer público por padrão. A publicação us
 2. Cache/backend, caso o limite da API se torne um problema.
 3. Monitorar disponibilidade e defasagem dos dados SUFRAMA.
 4. Fonte que diferencie IE inativa de baixada.
-5. Cabeçalhos na lista de IEs.
+5. ~~Cabeçalhos na lista de IEs~~ (concluído).
 6. Fontes tipográficas locais.
 
 ## Documentação complementar

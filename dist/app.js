@@ -90,8 +90,8 @@ function addCopyButtons() {
   const selector = [
     '.company-title h2', '.company-title p', '.status-line > span',
     '.summary-grid strong', '.summary-grid small', '.details dd',
-    '.activity b', '.activity p', '.state-registration > strong',
-    '.state-registration > span', '.state-registration > small',
+    '.activity b', '.activity p', '.state-registration:not(.state-registration-header) > strong',
+    '.state-registration:not(.state-registration-header) > span', '.state-registration:not(.state-registration-header) > small',
     '.partner b', '.partner p', '.location-card h3', '.location-card p',
     '.contact-card b', '.source-card b', '.source-card em', '.suframa-details dd',
     '.suframa-registration strong', '.suframa-registration dd', '.suframa-incentive span',
@@ -208,10 +208,13 @@ function render(data) {
   const registrations = establishment.inscricoes_estaduais || [];
   set('icmsContributor', registrations.some((item) => item.ativo) ? 'Sim' : 'Não');
   set('sintegraSourceStatus', registrations.length ? `${registrations.length} encontrada${registrations.length === 1 ? '' : 's'}` : 'Sem inscrição informada');
-  $('#stateRegistrationsList').innerHTML = registrations.length ? registrations.map((item) => {
+  const registrationsHeader = '<div class="state-registration state-registration-header" role="row"><span role="columnheader">Inscrição estadual</span><span role="columnheader">UF</span><span role="columnheader">Tipo</span><span role="columnheader">Situação</span><span role="columnheader">Atualização</span></div>';
+  const registrationsRows = registrations.length ? registrations.map((item) => {
     const isPrincipal = item.estado?.sigla === establishment.estado?.sigla;
-    return `<div class="state-registration"><strong>${escapeHtml(item.inscricao_estadual)}</strong><span>${escapeHtml(item.estado?.sigla)}</span><span class="registration-type" title="Classificação calculada pela UF do estabelecimento">${isPrincipal ? 'Principal' : 'Outra UF'}</span><span class="registration-active ${item.ativo ? '' : 'registration-inactive'}">${item.ativo ? 'Ativa' : 'Inativa'}</span><small>Atualizada em ${formatDate(String(item.atualizado_em || '').slice(0, 10))}</small></div>`;
-  }).join('') : '<p class="unavailable">Nenhuma inscrição estadual foi informada pelo SINTEGRA para este estabelecimento.</p>';
+    return `<div class="state-registration" role="row"><strong role="cell">${escapeHtml(item.inscricao_estadual)}</strong><span role="cell">${escapeHtml(item.estado?.sigla)}</span><span role="cell" class="registration-type" title="Classificação calculada pela UF do estabelecimento">${isPrincipal ? 'Principal' : 'Outra UF'}</span><span role="cell" class="registration-active ${item.ativo ? '' : 'registration-inactive'}">${item.ativo ? 'Ativa' : 'Inativa'}</span><small role="cell">Atualizada em ${formatDate(String(item.atualizado_em || '').slice(0, 10))}</small></div>`;
+  }).join('') : '';
+  $('#stateRegistrationsList').innerHTML = registrations.length ? registrationsHeader + registrationsRows : '<p class="unavailable">Nenhuma inscrição estadual foi informada pelo SINTEGRA para este estabelecimento.</p>';
+  $('#stateRegistrationsList').setAttribute('role', registrations.length ? 'table' : 'group');
 
   const partners = data.socios || [];
   set('partnersCount', `${partners.length} ${partners.length === 1 ? 'integrante' : 'integrantes'}`);

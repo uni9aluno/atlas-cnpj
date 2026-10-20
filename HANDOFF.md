@@ -305,6 +305,6 @@ O ZIP deve incluir AGENTS.md, HANDOFF.md, .gitignore, .openai/hosting.json e dis
 3. Criar cache/backend se o limite da API virar problema.
 4. Monitorar disponibilidade e defasagem dos dados SUFRAMA da fonte gratuita.
 5. Buscar fonte que diferencie IE inativa de baixada.
-6. Adicionar cabeçalhos à lista de IEs.
+6. (Concluído) Cabeçalhos na lista de IEs (Inscrição estadual, UF, Tipo, Situação, Atualização), com semântica de tabela para leitores de tela; ocultos visualmente em telas até 900px.
 7. Avaliar fontes tipográficas locais.
 
