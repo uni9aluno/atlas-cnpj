@@ -257,7 +257,7 @@ Evite abrir dist/index.html diretamente por file:// porque CORS pode impedir a A
 ~~~bash
 node --check dist/app.js
 git diff --check
-node --test tests/validador.test.mjs tests/cache.test.mjs
+node --test tests/validador.test.mjs tests/cache.test.mjs tests/sintegra.test.mjs
 ~~~
 
 Checklist:
@@ -303,7 +303,7 @@ O ZIP deve incluir AGENTS.md, HANDOFF.md, .gitignore, .openai/hosting.json e dis
 2. (Concluído) Testes automatizados do validador em tests/validador.test.mjs.
 3. (Parcial) Cache em memória de 5 minutos implementado (createCache em dist/app.js); criar backend/cache compartilhado só se o limite da API continuar sendo problema.
 4. Monitorar disponibilidade e defasagem dos dados SUFRAMA da fonte gratuita.
-5. Buscar fonte que diferencie IE inativa de baixada.
+5. (Parcial) A ficha mostra só Ativa/Inativa e traz links para a consulta pública do Sintegra por UF (SINTEGRA_URLS em dist/app.js). Pesquisa de 20/10/2026: nenhuma fonte gratuita/sem chave diferencia baixada; CNPJá aberta não retorna inscrições; só APIs pagas (CNPJá paga, Direct Data, Infosimples) ou backend. Revalidar os endereços por UF periodicamente: AL, AP, ES, MG, PA, PE, PI, RN e SE usam o portal nacional (http://www.sintegra.gov.br/) porque o endereço estadual estava morto, mudou ou não pôde ser verificado.
 6. (Concluído) Cabeçalhos na lista de IEs (Inscrição estadual, UF, Tipo, Situação, Atualização), com semântica de tabela para leitores de tela; ocultos visualmente em telas até 900px.
 7. (Concluído) Fontes DM Sans e Manrope servidas localmente em dist/fonts (WOFF2 variável, latin, licença OFL).
 

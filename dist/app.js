@@ -177,6 +177,36 @@ function resetSuframa() {
   set('suframaSourceStatus', 'Consultando…');
 }
 
+// Consulta pública do Sintegra por UF. Só entram endereços que responderam em 20/10/2026;
+// as demais UFs usam o portal nacional, que lista os cadastros estaduais.
+const SINTEGRA_PORTAL = 'http://www.sintegra.gov.br/';
+const SINTEGRA_URLS = {
+  AC: 'https://sefazonline.ac.gov.br/sefazonline/app.wmsintegralista',
+  AM: 'https://online.sefaz.am.gov.br/sintegra/',
+  BA: 'https://portal.sefaz.ba.gov.br/scripts/cadastro/cadastroBa/consultaBa.asp',
+  CE: 'https://servicos.sefaz.ce.gov.br/internet/Sintegra/Sintegra.Asp?estado=CE',
+  DF: 'https://ww1.receita.fazenda.df.gov.br/icms/sintegra-consulta',
+  GO: 'https://appasp.sefaz.go.gov.br/Sintegra/Consulta/default.html',
+  MA: 'https://aplicacoes.ma.gov.br/sintegra/jsp/consultaSintegra/consultaSintegraFiltro.jsf',
+  MS: 'https://servicos.efazenda.ms.gov.br/consultapublica/Home/Index',
+  MT: 'https://www.sefaz.mt.gov.br/cadastro/emissaocartao/emissaocartaocontribuinteacessodireto',
+  PB: 'https://www4.sefaz.pb.gov.br/sintegra/',
+  PR: 'http://www.sintegra.fazenda.pr.gov.br/sintegra/',
+  RJ: 'https://sucief-sincad-web.fazenda.rj.gov.br/sincad-web/index.jsf',
+  RO: 'https://portalcontribuinte.sefin.ro.gov.br/Publico/parametropublica.jsp',
+  RR: 'https://portalweb.sefaz.rr.gov.br/sintegra/servlet/wp_siate_consultasintegra',
+  RS: 'https://www.sefaz.rs.gov.br/consultas/contribuinte',
+  SC: 'https://sat.sef.sc.gov.br/tax.NET/Sat.Cadastro.Web/ComprovanteIE/Consulta.aspx',
+  SP: 'https://www.cadesp.fazenda.sp.gov.br/Pages/Cadastro/Consultas/ConsultaPublica/ConsultaPublica.aspx',
+  TO: 'https://sintegra.sefaz.to.gov.br/'
+};
+function sintegraLink(uf) {
+  const sigla = String(uf || '').toUpperCase();
+  return Object.hasOwn(SINTEGRA_URLS, sigla)
+    ? { url: SINTEGRA_URLS[sigla], direct: true }
+    : { url: SINTEGRA_PORTAL, direct: false };
+}
+
 function render(data) {
   const establishment = data.estabelecimento || {};
   currentCnpj = formatCnpj(establishment.cnpj || '');
@@ -214,7 +244,10 @@ function render(data) {
     const isPrincipal = item.estado?.sigla === establishment.estado?.sigla;
     return `<div class="state-registration" role="row"><strong role="cell">${escapeHtml(item.inscricao_estadual)}</strong><span role="cell">${escapeHtml(item.estado?.sigla)}</span><span role="cell" class="registration-type" title="Classificação calculada pela UF do estabelecimento">${isPrincipal ? 'Principal' : 'Outra UF'}</span><span role="cell" class="registration-active ${item.ativo ? '' : 'registration-inactive'}">${item.ativo ? 'Ativa' : 'Inativa'}</span><small role="cell">Atualizada em ${formatDate(String(item.atualizado_em || '').slice(0, 10))}</small></div>`;
   }).join('') : '';
+  const sintegraUfs = [...new Set(registrations.map((item) => item.estado?.sigla).filter(Boolean))];
+  const sintegraLinks = sintegraUfs.length ? `<div class="sintegra-links"><p>A fonte informa apenas <b>Ativa</b> ou <b>Inativa</b>. Para confirmar se a inscrição está baixada, suspensa ou inapta, consulte a fonte oficial:</p><ul>${sintegraUfs.map((uf) => { const link = sintegraLink(uf); return `<li><a href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer">${link.direct ? `Consulta pública do Sintegra — ${escapeHtml(uf)}` : `Portal nacional do Sintegra (cadastro de ${escapeHtml(uf)})`}<span class="visually-hidden"> (abre em nova aba)</span></a></li>`; }).join('')}</ul></div>` : '';
   $('#stateRegistrationsList').innerHTML = registrations.length ? registrationsHeader + registrationsRows : '<p class="unavailable">Nenhuma inscrição estadual foi informada pelo SINTEGRA para este estabelecimento.</p>';
+  $('#stateRegistrationsLinks').innerHTML = sintegraLinks;
   $('#stateRegistrationsList').setAttribute('role', registrations.length ? 'table' : 'group');
 
   const partners = data.socios || [];

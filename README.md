@@ -81,7 +81,8 @@ Dois indicadores são **classificações calculadas pelo app**, não dados ofici
 
 Observações importantes:
 
-- A API informa a atividade da IE apenas como booleano. O app **não afirma “Baixada”**, pois não há fonte específica para isso.
+- A API informa a atividade da IE apenas como booleano. O app mostra só **Ativa** ou **Inativa** e **não afirma “Baixada”** (nem Suspensa ou Inapta), pois não há fonte gratuita e utilizável pelo navegador que informe isso.
+- Abaixo da lista de IEs, a ficha traz um link para a **consulta pública do Sintegra de cada UF** das inscrições, para o usuário confirmar a situação oficial. UFs sem endereço verificado apontam para o portal nacional do Sintegra.
 - O regime tributário mostra MEI, Simples ou histórico quando a API fornece. **Não se infere** Lucro Real ou Presumido.
 
 ## Validação de CNPJ (numérico e alfanumérico)
@@ -133,7 +134,8 @@ atlas-cnpj/
 │   └── hosting.json     # identidade do Site e diretório estático
 ├── tests/
 │   ├── validador.test.mjs  # testes do validador de CNPJ (node --test)
-│   └── cache.test.mjs      # testes do cache em memória
+│   ├── cache.test.mjs      # testes do cache em memória
+│   └── sintegra.test.mjs   # testes dos links do Sintegra por UF
 └── dist/                # tudo o que é publicado
     ├── index.html       # estrutura, formulário, estados e ficha
     ├── styles.css       # tema, responsividade, impressão
@@ -148,7 +150,7 @@ Validação mínima antes de qualquer alteração ser enviada:
 ```bash
 node --check dist/app.js
 git diff --check
-node --test tests/validador.test.mjs tests/cache.test.mjs
+node --test tests/validador.test.mjs tests/cache.test.mjs tests/sintegra.test.mjs
 ```
 
 O teste automatizado do validador (Node 18+, sem dependências) cobre CNPJs numéricos e alfanuméricos válidos e inválidos, a normalização e a máscara. Como o `app.js` é um script de navegador, o teste extrai as funções puras do código-fonte em vez de importá-las.
@@ -187,7 +189,7 @@ O Site é **público** e deve permanecer público por padrão. A publicação us
 1. ~~Testes automatizados do validador de CNPJ~~ (concluído).
 2. ~~Cache~~ em memória no navegador (concluído); backend/cache compartilhado só se o limite da API ainda for um problema.
 3. Monitorar disponibilidade e defasagem dos dados SUFRAMA.
-4. Fonte que diferencie IE inativa de baixada.
+4. Fonte automatizada que diferencie IE inativa de baixada (hoje: link para o Sintegra da UF; automatizar exigiria API paga com chave e backend).
 5. ~~Cabeçalhos na lista de IEs~~ (concluído).
 6. ~~Fontes tipográficas locais~~ (concluído).
 

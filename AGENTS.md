@@ -32,7 +32,7 @@ Estas instruções valem para todo o projeto.
 - Contribuinte ICMS derivado:
   - Sim: existe pelo menos uma IE ativa.
   - Não: nenhuma IE ativa foi retornada.
-- A API informa atividade da IE como booleano. Não afirmar “Baixada” sem fonte específica.
+- A API informa atividade da IE como booleano. Não afirmar “Baixada” sem fonte específica. Exibir apenas Ativa/Inativa e manter o link para a consulta pública do Sintegra da UF da IE. Só adicionar endereço de UF em SINTEGRA_URLS depois de verificar que responde.
 - O regime pode mostrar MEI, Simples ou histórico quando a API fornecer. Não inferir Lucro Real ou Presumido.
 - A consulta SUFRAMA é automática pelo CNPJ e usa o array `suframa` retornado pela API pública CNPJá.
 - Nunca exibir resultado SUFRAMA de uma pesquisa anterior quando o CNPJ atual mudar.
@@ -56,7 +56,7 @@ Execute:
 ~~~bash
 node --check dist/app.js
 git diff --check
-node --test tests/validador.test.mjs tests/cache.test.mjs
+node --test tests/validador.test.mjs tests/cache.test.mjs tests/sintegra.test.mjs
 ~~~
 
 Casos do validador:
