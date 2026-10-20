@@ -17,6 +17,7 @@ Estas instruções valem para todo o projeto.
 - Manifesto: .openai/hosting.json.
 - APIs: GET https://publica.cnpj.ws/cnpj/{cnpj} e GET https://open.cnpja.com/office/{cnpj}.
 - Não há backend, banco de dados, autenticação ou persistência remota de consultas.
+- Respostas das APIs podem ser reutilizadas por cache apenas em memória (5 min); nunca gravar respostas em localStorage ou disco.
 - O histórico é local ao navegador, armazenado em `localStorage` com no máximo 25 CNPJs.
 
 ## Regras de produto e dados
@@ -55,7 +56,7 @@ Execute:
 ~~~bash
 node --check dist/app.js
 git diff --check
-node --test tests/validador.test.mjs
+node --test tests/validador.test.mjs tests/cache.test.mjs
 ~~~
 
 Casos do validador:

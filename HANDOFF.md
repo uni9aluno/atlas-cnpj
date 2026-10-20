@@ -204,7 +204,7 @@ Pesos do segundo:
 - SUFRAMA depende de uma segunda fonte gratuita, CNPJá, e pode terminar alguns instantes depois da ficha principal.
 - A fonte pode ainda não possuir registros alfanuméricos reais.
 - O histórico não sincroniza entre navegadores ou dispositivos e pode ser apagado com os dados do site.
-- Não há backend para cache.
+- O cache é só em memória da aba (5 min); não há backend para cache compartilhado.
 
 ## 10. Histórico desde o início
 
@@ -257,7 +257,7 @@ Evite abrir dist/index.html diretamente por file:// porque CORS pode impedir a A
 ~~~bash
 node --check dist/app.js
 git diff --check
-node --test tests/validador.test.mjs
+node --test tests/validador.test.mjs tests/cache.test.mjs
 ~~~
 
 Checklist:
@@ -301,7 +301,7 @@ O ZIP deve incluir AGENTS.md, HANDOFF.md, .gitignore, .openai/hosting.json e dis
 
 1. Criar/conectar repositório GitHub do usuário.
 2. (Concluído) Testes automatizados do validador em tests/validador.test.mjs.
-3. Criar cache/backend se o limite da API virar problema.
+3. (Parcial) Cache em memória de 5 minutos implementado (createCache em dist/app.js); criar backend/cache compartilhado só se o limite da API continuar sendo problema.
 4. Monitorar disponibilidade e defasagem dos dados SUFRAMA da fonte gratuita.
 5. Buscar fonte que diferencie IE inativa de baixada.
 6. (Concluído) Cabeçalhos na lista de IEs (Inscrição estadual, UF, Tipo, Situação, Atualização), com semântica de tabela para leitores de tela; ocultos visualmente em telas até 900px.
