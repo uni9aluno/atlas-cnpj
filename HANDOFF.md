@@ -205,7 +205,6 @@ Pesos do segundo:
 - A fonte pode ainda não possuir registros alfanuméricos reais.
 - O histórico não sincroniza entre navegadores ou dispositivos e pode ser apagado com os dados do site.
 - Não há backend para cache.
-- Google Fonts exige rede; há fallback local do navegador.
 
 ## 10. Histórico desde o início
 
@@ -306,5 +305,5 @@ O ZIP deve incluir AGENTS.md, HANDOFF.md, .gitignore, .openai/hosting.json e dis
 4. Monitorar disponibilidade e defasagem dos dados SUFRAMA da fonte gratuita.
 5. Buscar fonte que diferencie IE inativa de baixada.
 6. (Concluído) Cabeçalhos na lista de IEs (Inscrição estadual, UF, Tipo, Situação, Atualização), com semântica de tabela para leitores de tela; ocultos visualmente em telas até 900px.
-7. Avaliar fontes tipográficas locais.
+7. (Concluído) Fontes DM Sans e Manrope servidas localmente em dist/fonts (WOFF2 variável, latin, licença OFL).
 

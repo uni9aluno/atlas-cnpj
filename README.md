@@ -66,7 +66,7 @@ Se a consulta SUFRAMA falhar, os demais dados da empresa continuam sendo exibido
 | [CNPJ.ws (API pública)](https://publica.cnpj.ws) | Dados cadastrais, CNAE, sócios, regime e inscrições estaduais | Limite de **3 consultas por minuto por IP**; HTTP 429 é tratado com mensagem clara |
 | [CNPJá (API aberta)](https://open.cnpja.com) | Inscrições e incentivos SUFRAMA | Gratuita, sem chave; pode responder alguns instantes depois da ficha principal |
 | Google Maps (embed) | Mapa do endereço | Abre a mesma busca no Google Maps ao clicar |
-| Google Fonts | Tipografia (DM Sans e Manrope) | Exige rede; há fallback local do navegador |
+| Fontes locais | Tipografia (DM Sans e Manrope) | Servidas de `dist/fonts/` (WOFF2 variável, licença OFL); sem dependência do Google Fonts |
 
 Respostas HTTP tratadas: `200` (renderiza), `404` (CNPJ não encontrado), `429` (limite gratuito atingido), demais falhas (fonte indisponível) e erro de rede/CORS (mensagem de conexão).
 
@@ -136,7 +136,8 @@ atlas-cnpj/
 └── dist/                # tudo o que é publicado
     ├── index.html       # estrutura, formulário, estados e ficha
     ├── styles.css       # tema, responsividade, impressão
-    └── app.js           # validação, chamadas às APIs, transformação e interações
+    ├── app.js           # validação, chamadas às APIs, transformação e interações
+    └── fonts/           # DM Sans e Manrope (WOFF2, licença OFL)
 ```
 
 ## Testes e validação
@@ -186,7 +187,7 @@ O Site é **público** e deve permanecer público por padrão. A publicação us
 3. Monitorar disponibilidade e defasagem dos dados SUFRAMA.
 4. Fonte que diferencie IE inativa de baixada.
 5. ~~Cabeçalhos na lista de IEs~~ (concluído).
-6. Fontes tipográficas locais.
+6. ~~Fontes tipográficas locais~~ (concluído).
 
 ## Documentação complementar
 

@@ -1,0 +1,7 @@
+Fontes incluídas neste diretório:
+
+- DM Sans (https://fonts.google.com/specimen/DM+Sans) - Copyright 2014 The DM Sans Project Authors
+- Manrope (https://fonts.google.com/specimen/Manrope) - Copyright 2018 The Manrope Project Authors
+
+Ambas licenciadas sob a SIL Open Font License, Version 1.1 (https://openfontlicense.org).
+Arquivos variáveis WOFF2, subconjunto latino, obtidos do Google Fonts.
