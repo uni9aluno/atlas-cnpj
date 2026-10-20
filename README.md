@@ -131,6 +131,8 @@ atlas-cnpj/
 ├── .gitignore
 ├── .openai/
 │   └── hosting.json     # identidade do Site e diretório estático
+├── tests/
+│   └── validador.test.mjs  # testes do validador de CNPJ (node --test)
 └── dist/                # tudo o que é publicado
     ├── index.html       # estrutura, formulário, estados e ficha
     ├── styles.css       # tema, responsividade, impressão
@@ -144,7 +146,10 @@ Validação mínima antes de qualquer alteração ser enviada:
 ```bash
 node --check dist/app.js
 git diff --check
+node --test tests/validador.test.mjs
 ```
+
+O teste automatizado do validador (Node 18+, sem dependências) cobre CNPJs numéricos e alfanuméricos válidos e inválidos, a normalização e a máscara. Como o `app.js` é um script de navegador, o teste extrai as funções puras do código-fonte em vez de importá-las.
 
 Validação manual (com rede): consulte `33.000.167/0001-01` e confira razão social, situação, endereço, CNAE, IEs, SUFRAMA e os erros 404/429. Um CNPJ com SUFRAMA conhecido para teste é `07.526.557/0116-59`. O checklist completo está no [HANDOFF.md](HANDOFF.md).
 
@@ -176,7 +181,7 @@ O Site é **público** e deve permanecer público por padrão. A publicação us
 
 ## Roadmap
 
-1. Testes automatizados do validador de CNPJ.
+1. ~~Testes automatizados do validador de CNPJ~~ (concluído).
 2. Cache/backend, caso o limite da API se torne um problema.
 3. Monitorar disponibilidade e defasagem dos dados SUFRAMA.
 4. Fonte que diferencie IE inativa de baixada.

@@ -55,6 +55,7 @@ Execute:
 ~~~bash
 node --check dist/app.js
 git diff --check
+node --test tests/validador.test.mjs
 ~~~
 
 Casos do validador:

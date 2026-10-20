@@ -258,6 +258,7 @@ Evite abrir dist/index.html diretamente por file:// porque CORS pode impedir a A
 ~~~bash
 node --check dist/app.js
 git diff --check
+node --test tests/validador.test.mjs
 ~~~
 
 Checklist:
@@ -300,7 +301,7 @@ O ZIP deve incluir AGENTS.md, HANDOFF.md, .gitignore, .openai/hosting.json e dis
 ## 16. Próximos passos
 
 1. Criar/conectar repositório GitHub do usuário.
-2. Adicionar testes automatizados do validador.
+2. (Concluído) Testes automatizados do validador em tests/validador.test.mjs.
 3. Criar cache/backend se o limite da API virar problema.
 4. Monitorar disponibilidade e defasagem dos dados SUFRAMA da fonte gratuita.
 5. Buscar fonte que diferencie IE inativa de baixada.
