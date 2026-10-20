@@ -10,6 +10,7 @@ const toast = $('#toast');
 const dialog = $('#helpDialog');
 const historyDialog = $('#historyDialog');
 const HISTORY_KEY = 'atlas-cnpj-history-v1';
+const CACHE_TTL_MS = 5 * 60 * 1000;
 let currentCnpj = '';
 
 function onlyNumbers(value) { return value.replace(/\D/g, ''); }
@@ -239,14 +240,35 @@ function render(data) {
   addCopyButtons();
 }
 
+// Cache em memória (apenas na aba aberta, nunca gravado em disco): repetir uma
+// consulta recente não gasta o limite de 3 consultas por minuto da API pública.
+function createCache(ttl, now = () => Date.now()) {
+  const store = new Map();
+  return {
+    get(key) {
+      const entry = store.get(key);
+      if (!entry) return undefined;
+      if (now() - entry.time > ttl) { store.delete(key); return undefined; }
+      return entry.value;
+    },
+    set(key, value) { store.set(key, { value, time: now() }); }
+  };
+}
+const responseCache = createCache(CACHE_TTL_MS);
+
 async function consultSuframa(cnpj) {
   const feedback = $('#suframaFeedback');
   try {
-    const response = await fetch(SUFRAMA_API + encodeURIComponent(cnpj), { headers: { Accept: 'application/json' } });
+    let data = responseCache.get(`suframa:${cnpj}`);
+    if (!data) {
+      const response = await fetch(SUFRAMA_API + encodeURIComponent(cnpj), { headers: { Accept: 'application/json' } });
+      if (normalizeCnpj(currentCnpj) !== cnpj) return;
+      if (response.status === 429) throw new Error('O limite gratuito da consulta SUFRAMA foi atingido. Aguarde um minuto e tente novamente.');
+      if (!response.ok) throw new Error('A fonte SUFRAMA está temporariamente indisponível.');
+      data = await response.json();
+      responseCache.set(`suframa:${cnpj}`, data);
+    }
     if (normalizeCnpj(currentCnpj) !== cnpj) return;
-    if (response.status === 429) throw new Error('O limite gratuito da consulta SUFRAMA foi atingido. Aguarde um minuto e tente novamente.');
-    if (!response.ok) throw new Error('A fonte SUFRAMA está temporariamente indisponível.');
-    const data = await response.json();
     const registrations = Array.isArray(data.suframa) ? data.suframa : [];
     set('suframaExists', registrations.length ? 'Sim' : 'Não');
     set('suframaCount', String(registrations.length));
@@ -276,11 +298,16 @@ async function consult(cnpj) {
   errorState.hidden = true;
   loading.hidden = false;
   try {
-    const response = await fetch(API + encodeURIComponent(cnpj), { headers: { Accept: 'application/json' } });
-    if (response.status === 404) throw new Error('CNPJ não encontrado na base pública.');
-    if (response.status === 429) throw new Error('O limite gratuito de 3 consultas por minuto foi atingido. Aguarde um minuto e tente novamente.');
-    if (!response.ok) throw new Error('A fonte gratuita está temporariamente indisponível. Tente novamente em instantes.');
-    render(await response.json());
+    let data = responseCache.get(`cnpj:${cnpj}`);
+    if (!data) {
+      const response = await fetch(API + encodeURIComponent(cnpj), { headers: { Accept: 'application/json' } });
+      if (response.status === 404) throw new Error('CNPJ não encontrado na base pública.');
+      if (response.status === 429) throw new Error('O limite gratuito de 3 consultas por minuto foi atingido. Aguarde um minuto e tente novamente.');
+      if (!response.ok) throw new Error('A fonte gratuita está temporariamente indisponível. Tente novamente em instantes.');
+      data = await response.json();
+      responseCache.set(`cnpj:${cnpj}`, data);
+    }
+    render(data);
     result.hidden = false;
     result.scrollIntoView({ behavior: 'smooth', block: 'start' });
     consultSuframa(cnpj);

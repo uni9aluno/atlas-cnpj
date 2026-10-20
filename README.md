@@ -132,7 +132,8 @@ atlas-cnpj/
 ├── .openai/
 │   └── hosting.json     # identidade do Site e diretório estático
 ├── tests/
-│   └── validador.test.mjs  # testes do validador de CNPJ (node --test)
+│   ├── validador.test.mjs  # testes do validador de CNPJ (node --test)
+│   └── cache.test.mjs      # testes do cache em memória
 └── dist/                # tudo o que é publicado
     ├── index.html       # estrutura, formulário, estados e ficha
     ├── styles.css       # tema, responsividade, impressão
@@ -147,7 +148,7 @@ Validação mínima antes de qualquer alteração ser enviada:
 ```bash
 node --check dist/app.js
 git diff --check
-node --test tests/validador.test.mjs
+node --test tests/validador.test.mjs tests/cache.test.mjs
 ```
 
 O teste automatizado do validador (Node 18+, sem dependências) cobre CNPJs numéricos e alfanuméricos válidos e inválidos, a normalização e a máscara. Como o `app.js` é um script de navegador, o teste extrai as funções puras do código-fonte em vez de importá-las.
@@ -159,6 +160,7 @@ Ao mexer no validador, faça regressão numérica com a tabela da seção anteri
 ## Privacidade e segurança
 
 - Sem backend: nenhuma consulta passa por servidor próprio nem é armazenada remotamente.
+- Respostas das APIs ficam em cache apenas na memória da aba por 5 minutos, para poupar o limite de consultas; nada disso é gravado em disco.
 - O histórico fica apenas no `localStorage` do navegador do usuário (máximo de 25 itens) e pode ser limpo na própria interface.
 - Sem chaves, tokens ou credenciais no código. **Não adicione segredos ao repositório.**
 - Todo conteúdo vindo da API é escapado (`escapeHtml`) antes de ser usado em `innerHTML`.
@@ -174,7 +176,7 @@ Ao mexer no validador, faça regressão numérica com a tabela da seção anteri
 - A fonte pode ainda não ter registros alfanuméricos reais.
 - SUFRAMA depende de uma segunda fonte gratuita e pode demorar alguns instantes.
 - O histórico não sincroniza entre navegadores/dispositivos e some se os dados do site forem apagados.
-- Sem backend, não há cache compartilhado.
+- O cache é só em memória da aba (5 minutos): recarregar a página o descarta e ele não é compartilhado entre usuários. Um cache compartilhado exigiria backend.
 
 ## Publicação
 
@@ -183,7 +185,7 @@ O Site é **público** e deve permanecer público por padrão. A publicação us
 ## Roadmap
 
 1. ~~Testes automatizados do validador de CNPJ~~ (concluído).
-2. Cache/backend, caso o limite da API se torne um problema.
+2. ~~Cache~~ em memória no navegador (concluído); backend/cache compartilhado só se o limite da API ainda for um problema.
 3. Monitorar disponibilidade e defasagem dos dados SUFRAMA.
 4. Fonte que diferencie IE inativa de baixada.
 5. ~~Cabeçalhos na lista de IEs~~ (concluído).
