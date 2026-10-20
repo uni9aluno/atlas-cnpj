@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Atlas CNPJ — Consulta empresarial</title>
+  <meta name="description" content="Consulte dados cadastrais, fiscais e societários de empresas brasileiras em um só lugar.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230c2f4b'/%3E%3Cpath d='M17 45 29 17h7l12 28h-8l-2-6H27l-2 6Zm13-13h6l-3-9Z' fill='%235ee0c2'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Atlas CNPJ, início">
+      <span class="brand-mark">A</span><span>Atlas <b>CNPJ</b></span>
+    </a>
+    <nav aria-label="Navegação principal">
+      <a class="active" href="#consulta">Consulta</a>
+      <a href="#fontes">Fontes</a>
+      <a href="#historico" id="historyNavLink">Histórico</a>
+    </nav>
+    <div class="top-actions">
+      <button class="ghost history-trigger" type="button" id="historyButton">Histórico <span id="historyCount">0</span></button>
+      <button class="ghost" type="button" id="helpButton">Como funciona</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="search-shell" id="consulta">
+      <div class="intro">
+        <span class="eyebrow">INTELIGÊNCIA CADASTRAL</span>
+        <h1>Encontre uma empresa.<br><em>Entenda o negócio.</em></h1>
+        <p>Dados cadastrais, fiscais e societários organizados em uma consulta clara.</p>
+      </div>
+
+      <form class="search-card" id="searchForm">
+        <label for="document">CNPJ numérico ou alfanumérico</label>
+        <div class="search-row">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input id="document" name="document" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="18" placeholder="00.000.000/0000-00" value="33.000.167/0001-01">
+          <button class="primary" type="submit">Consultar empresa</button>
+        </div>
+        <div class="source-options" id="fontes">
+          <span>Fonte gratuita</span>
+          <label><input type="checkbox" checked disabled> CNPJ.ws + CNPJá · Receita, SINTEGRA e SUFRAMA</label>
+          <small>Consultas públicas gratuitas, sujeitas aos limites de cada fonte.</small>
+        </div>
+        <div class="examples">Experimente: <button type="button" data-cnpj="19.131.243/0001-97">19.131.243/0001-97</button><button type="button" data-cnpj="33.000.167/0001-01">33.000.167/0001-01</button></div>
+      </form>
+    </section>
+
+    <section class="loading-state" id="loading" hidden aria-live="polite">
+      <span></span><p>Organizando informações da empresa…</p>
+    </section>
+
+    <section class="error-state" id="errorState" hidden aria-live="assertive">
+      <b>Não foi possível concluir a consulta</b>
+      <p id="errorMessage">Confira o CNPJ e tente novamente.</p>
+    </section>
+
+    <section class="result" id="result" hidden aria-live="polite">
+      <div class="result-head">
+        <div class="company-monogram" id="companyMonogram">E</div>
+        <div class="company-title">
+          <div class="status-line"><span class="status" id="statusBadge">ATIVA</span><span id="statusDate"></span></div>
+          <h2 id="companyName"></h2>
+          <p id="companyMeta"></p>
+        </div>
+        <div class="head-actions">
+          <button class="icon-button" type="button" id="copyButton">Copiar CNPJ</button>
+          <button class="icon-button" type="button" id="printButton">Exportar ficha</button>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <article><span>Situação cadastral</span><strong class="positive" id="summaryStatus"></strong><small id="summaryStatusDate"></small></article>
+        <article><span>Capital social</span><strong id="summaryCapital"></strong><small>Declarado na base pública</small></article>
+        <article><span>Porte</span><strong id="summarySize"></strong><small id="summaryBranch"></small></article>
+        <article><span>Natureza jurídica</span><strong id="summaryNature"></strong><small id="summaryNatureCode"></small></article>
+      </div>
+
+      <div class="content-grid">
+        <div class="main-column">
+          <article class="panel">
+            <div class="panel-heading"><div><span class="section-number">01</span><h3>Dados cadastrais</h3></div><span class="verified">✓ Dados verificados</span></div>
+            <dl class="details">
+              <div><dt>Razão social</dt><dd id="legalName"></dd></div>
+              <div><dt>Nome fantasia</dt><dd id="tradeName"></dd></div>
+              <div><dt>Data de abertura</dt><dd id="openingDate"></dd></div>
+              <div><dt>Regime de tributação</dt><dd id="taxRegime"></dd></div>
+              <div><dt>Código IBGE do município</dt><dd id="ibgeCode"></dd></div>
+              <div><dt>Contribuinte de ICMS</dt><dd id="icmsContributor"></dd></div>
+            </dl>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading"><div><span class="section-number">02</span><h3>Atividades econômicas</h3></div></div>
+            <div id="activitiesList"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading"><div><span class="section-number">03</span><h3>Inscrições estaduais</h3></div><span class="count">SINTEGRA · tipo calculado pela UF</span></div>
+            <div id="stateRegistrationsList"></div>
+          </article>
+
+          <article class="panel" id="suframa">
+            <div class="panel-heading"><div><span class="section-number">04</span><h3>SUFRAMA</h3></div><span class="count">Consulta automática pelo CNPJ</span></div>
+            <p class="suframa-intro">Cadastro, situação e incentivos fiscais consultados automaticamente junto com a empresa.</p>
+            <div class="suframa-feedback" id="suframaFeedback" aria-live="polite">Consultando cadastro SUFRAMA…</div>
+            <dl class="details suframa-details" id="suframaResult" hidden>
+              <div><dt>Possui inscrição SUFRAMA</dt><dd id="suframaExists"></dd></div>
+              <div><dt>Quantidade de inscrições</dt><dd id="suframaCount"></dd></div>
+              <div><dt>CNPJ consultado</dt><dd id="suframaCnpj"></dd></div>
+              <div><dt>Dados atualizados em</dt><dd id="suframaUpdatedAt"></dd></div>
+            </dl>
+            <div id="suframaRegistrationsList"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading"><div><span class="section-number">05</span><h3>Quadro societário</h3></div><span class="count" id="partnersCount"></span></div>
+            <div id="partnersList"></div>
+          </article>
+        </div>
+
+        <aside>
+          <article class="panel location-card">
+            <span class="section-label">LOCALIZAÇÃO</span>
+            <a class="map-preview" id="mapPreviewLink" href="#" target="_blank" rel="noreferrer" aria-label="Abrir localização da empresa no Google Maps">
+              <iframe id="mapFrame" title="Mapa da localização da empresa" loading="lazy" referrerpolicy="no-referrer-when-downgrade" tabindex="-1"></iframe>
+              <span>Abrir no Google Maps</span>
+            </a>
+            <h3 id="addressStreet"></h3>
+            <p id="addressLocality"></p>
+            <a id="mapLink" href="#" target="_blank" rel="noreferrer">Abrir no mapa</a>
+          </article>
+          <article class="panel contact-card">
+            <span class="section-label">CONTATOS</span>
+            <div class="contact-entry"><a id="phoneLink" href="#" aria-label="Ligar"><i>☎</i></a><span><small>Telefone</small><b id="phoneValue"></b></span></div>
+            <div class="contact-entry"><a id="emailLink" href="#" aria-label="Enviar e-mail"><i>✉</i></a><span><small>E-mail</small><b id="emailValue"></b></span></div>
+          </article>
+          <article class="panel source-card">
+            <span class="section-label">FONTES CONSULTADAS</span>
+            <ul><li>Receita Federal <b>Consultado agora</b></li><li>SINTEGRA / SEFAZ <b id="sintegraSourceStatus">Consultado agora</b></li><li>SUFRAMA <b id="suframaSourceStatus">Consulta automática</b></li></ul>
+          </article>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer><span>Atlas CNPJ</span><p>Dados públicos via CNPJ.ws e CNPJá. Confirme informações nos órgãos oficiais.</p><span>Brasil · 2026</span></footer>
+
+  <dialog id="helpDialog">
+    <button class="dialog-close" aria-label="Fechar">×</button>
+    <span class="eyebrow">CONSULTA EMPRESARIAL</span>
+    <h2>Uma visão, várias fontes.</h2>
+    <p>Digite um CNPJ numérico tradicional ou alfanumérico para consultar gratuitamente dados cadastrais da Receita Federal, inscrições estaduais do SINTEGRA e inscrições SUFRAMA. Todas as consultas acontecem automaticamente pelo CNPJ.</p>
+    <button class="primary dialog-ok" type="button">Entendi</button>
+  </dialog>
+  <dialog class="history-dialog" id="historyDialog">
+    <button class="dialog-close" id="historyCloseButton" aria-label="Fechar">×</button>
+    <span class="eyebrow">CONSULTAS RECENTES</span>
+    <div class="history-title-row">
+      <div><h2>Histórico</h2><p>Consultas salvas somente neste navegador.</p></div>
+      <button class="icon-button" id="clearHistoryButton" type="button">Limpar histórico</button>
+    </div>
+    <div class="history-list" id="historyList"></div>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
